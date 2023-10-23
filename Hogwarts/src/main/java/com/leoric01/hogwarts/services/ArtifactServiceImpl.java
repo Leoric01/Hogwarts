@@ -18,7 +18,7 @@ public class ArtifactServiceImpl implements ArtifactService {
   }
 
   @Override
-  public Artifact findById(String id) {
+  public Artifact findById(Long id) {
     return artifactRepository.findById(id).orElseThrow(() -> new ArtifactNotFoundException(id));
   }
 }

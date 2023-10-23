@@ -1,9 +1,11 @@
 package com.leoric01.hogwarts.models.wizard;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.leoric01.hogwarts.models.artifact.Artifact;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,10 +17,15 @@ public class Wizard implements Serializable {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "owner", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Artifact> artifacts;
+    @OneToMany(mappedBy = "wizard", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JsonIgnore
+    private List<Artifact> artifacts = new ArrayList<>();
 
     public Wizard() {
+    }
+
+    public Wizard(String name) {
+        this.name = name;
     }
 
     public void setId(Long id) {
@@ -43,5 +50,9 @@ public class Wizard implements Serializable {
 
     public void setArtifacts(List<Artifact> artifacts) {
         this.artifacts = artifacts;
+    }
+
+    public Integer getNumberOfArtifacts() {
+        return this.artifacts.size();
     }
 }

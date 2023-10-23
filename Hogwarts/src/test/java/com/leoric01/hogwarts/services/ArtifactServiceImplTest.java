@@ -40,9 +40,9 @@ class ArtifactServiceImplTest {
 
     @Test
     void testFindByIdNotFound(){
-        given(artifactRepository.findById(Mockito.anyString())).willReturn(Optional.empty());
+        given(artifactRepository.findById(Mockito.anyLong())).willReturn(Optional.empty());
         Throwable thrown = catchThrowable(()->{
-            Artifact artifactById = artifactService.findById("12345");
+            Artifact artifactById = artifactService.findById(12345L);
         });
         assertThat(thrown).isInstanceOf(ArtifactNotFoundException.class).hasMessage("Could not find artifact with id 12345 :(");
 
@@ -50,7 +50,7 @@ class ArtifactServiceImplTest {
     @Test
     void testFindByIdSuccess() {
         Artifact artifact = new Artifact();
-        artifact.setId("12345");
+        artifact.setId(12345L);
         artifact.setName("Invisibility cloak");
         artifact.setDescription("used to make the wearer invisible");
         artifact.setImageUrl("ImageUrl");
@@ -60,14 +60,14 @@ class ArtifactServiceImplTest {
         wizard.setName("Ron Weasley");
         artifact.setOwner(wizard);
 
-        given(artifactRepository.findById("12345")).willReturn(Optional.of(artifact));
+        given(artifactRepository.findById(12345L)).willReturn(Optional.of(artifact));
 
-        Artifact artifactById = artifactService.findById("12345");
+        Artifact artifactById = artifactService.findById(12345L);
 
         assertEquals(artifact.getId(), artifactById.getId());
         assertEquals(artifact.getName(), artifactById.getName());
         assertEquals(artifact.getDescription(), artifactById.getDescription());
         assertEquals(artifact.getImageUrl(), artifactById.getImageUrl());
-        verify(artifactRepository, times(1)).findById("12345");
+        verify(artifactRepository, times(1)).findById(12345L);
       }
 }

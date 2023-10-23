@@ -7,5 +7,5 @@ import org.springframework.stereotype.Service;
 @Service
 @Transactional
 public interface ArtifactService {
-    Artifact findById(String id);
+    Artifact findById(Long id);
 }

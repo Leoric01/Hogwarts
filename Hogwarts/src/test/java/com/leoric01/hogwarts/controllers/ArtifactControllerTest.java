@@ -38,12 +38,12 @@ class ArtifactControllerTest {
 
     @BeforeEach
     void setUp() {
-        Artifact a1 = new Artifact("11111", "Deluminator", "description1","ImagUrl1");
-        Artifact a2 = new Artifact("11112", "Invisibility Cloak", "description2","ImagUrl2");
-        Artifact a3 = new Artifact("11113", "Elder's Wand", "description3","ImagUrl3");
-        Artifact a4 = new Artifact("11114", "Map", "description4","ImagUrl4");
-        Artifact a5 = new Artifact("11115", "Sword of Gryffindor", "description5","ImagUrl5");
-        Artifact a6 = new Artifact("11116", "Resurrection Stone", "description6","ImagUrl6");
+        Artifact a1 = new Artifact(11111L, "Deluminator", "description1","ImagUrl1");
+        Artifact a2 = new Artifact(11112L, "Invisibility Cloak", "description2","ImagUrl2");
+        Artifact a3 = new Artifact(11113L, "Elder's Wand", "description3","ImagUrl3");
+        Artifact a4 = new Artifact(11114L, "Map", "description4","ImagUrl4");
+        Artifact a5 = new Artifact(11115L, "Sword of Gryffindor", "description5","ImagUrl5");
+        Artifact a6 = new Artifact(11116L, "Resurrection Stone", "description6","ImagUrl6");
         this.artifacts = new ArrayList<>(Arrays.asList(a1,a2,a3,a4,a5,a6));
     }
 
@@ -53,7 +53,7 @@ class ArtifactControllerTest {
 
     @Test
     void testFindArtifactByIdSuccess() throws Exception {
-        given(this.artifactService.findById("11111")).willReturn(this.artifacts.get(0));
+        given(this.artifactService.findById(11111L)).willReturn(this.artifacts.get(0));
 
         mvc.perform(MockMvcRequestBuilders.get("/api/v1/artifacts/11111")
                 .accept(MediaType.APPLICATION_JSON))
@@ -66,7 +66,7 @@ class ArtifactControllerTest {
 
     @Test
     void testFindArtifactByIdNotFound() throws Exception {
-    given(this.artifactService.findById("11111")).willThrow(new ArtifactNotFoundException("11111"));
+    given(this.artifactService.findById(11111L)).willThrow(new ArtifactNotFoundException(11111L));
 
         mvc.perform(MockMvcRequestBuilders.get("/api/v1/artifacts/11111")
                 .accept(MediaType.APPLICATION_JSON))

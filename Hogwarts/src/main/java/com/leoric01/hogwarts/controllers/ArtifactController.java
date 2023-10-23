@@ -1,6 +1,8 @@
 package com.leoric01.hogwarts.controllers;
 
 import com.leoric01.hogwarts.models.artifact.Artifact;
+import com.leoric01.hogwarts.models.artifact.converter.ArtifactToArtifactDtoConverter;
+import com.leoric01.hogwarts.models.artifact.dto.ArtifactDto;
 import com.leoric01.hogwarts.services.ArtifactService;
 import com.leoric01.hogwarts.system.Result;
 import com.leoric01.hogwarts.system.StatusCode;
@@ -14,14 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 public class ArtifactController {
   private final ArtifactService artifactService;
+  private final ArtifactToArtifactDtoConverter artifactToArtifactDtoConverter;
 
   @Autowired
-  public ArtifactController(ArtifactService artifactService) {
+  public ArtifactController(ArtifactService artifactService, ArtifactToArtifactDtoConverter artifactToArtifactDtoConverter) {
     this.artifactService = artifactService;
+    this.artifactToArtifactDtoConverter = artifactToArtifactDtoConverter;
   }
+
   @GetMapping("/artifacts/{artifactId}")
-  public Result findArtifactById(@PathVariable String artifactId){
+  public Result findArtifactById(@PathVariable Long artifactId){
     Artifact foundArtifact = artifactService.findById(artifactId);
-    return new Result(true, StatusCode.SUCCESS, "Find one Success", foundArtifact);
+    ArtifactDto artifactDto = artifactToArtifactDtoConverter.convert(foundArtifact);
+    return new Result(true, StatusCode.SUCCESS, "Find one Success", artifactDto);
   }
 }
