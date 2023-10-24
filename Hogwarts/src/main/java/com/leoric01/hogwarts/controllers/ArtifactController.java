@@ -48,4 +48,9 @@ public class ArtifactController {
     ArtifactDto savedArtifactDto = artifactToArtifactDtoConverter.convert(savedArtifact);
     return new Result(true, StatusCode.SUCCESS,"Add Success", savedArtifactDto);
   }
+  @PostMapping("/artifacts/{artifactId}")
+  public Result updateArtifact(@PathVariable String artifactId, @Valid @RequestBody ArtifactDto artifactDto){
+    return new Result();
+  }
+
 }

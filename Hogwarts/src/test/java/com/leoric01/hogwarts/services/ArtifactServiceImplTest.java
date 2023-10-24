@@ -54,6 +54,26 @@ class ArtifactServiceImplTest {
   void tearDown() {}
 
   @Test
+  void testUpdateNotFound(){
+    Artifact update = new Artifact(11112L, "Invisibility Cloak", "updatedDescription", "ImagUrl2");
+    given(artifactRepository.findById(update.getId()-100)).willReturn(Optional.empty());
+    assertThrows(ArtifactNotFoundException.class, ()-> artifactService.update(update.getId()-100, update));
+  }
+  @Test
+  void testUpdateSuccess(){
+    Artifact oldArtifact = new Artifact(11112L, "Invisibility Cloak", "description2", "ImagUrl2");
+    Artifact update = new Artifact(11112L, "Invisibility Cloak", "updatedDescription", "ImagUrl2");
+    given(artifactRepository.findById(oldArtifact.getId())).willReturn(Optional.of(oldArtifact));
+    given(artifactRepository.save(oldArtifact)).willReturn(oldArtifact); // on save old artifact already has updated info
+    Artifact updatedArtifact = artifactService.update(11112L, update);
+    assertThat(updatedArtifact.getId()).isEqualTo(11112L);
+    assertThat(updatedArtifact.getDescription()).isEqualTo(update.getDescription());
+    verify(artifactRepository, times(1)).findById(11112L);
+    verify(artifactRepository, times(1)).save(oldArtifact);
+
+  }
+
+  @Test
   void testSaveSuccess() {
     Artifact newArtifact = new Artifact();
     newArtifact.setName("test artifact name");
