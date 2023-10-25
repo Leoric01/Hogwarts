@@ -22,8 +22,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ArtifactServiceImplTest {
@@ -52,6 +51,26 @@ class ArtifactServiceImplTest {
 
   @AfterEach
   void tearDown() {}
+
+  @Test
+  void testDeleteSuccess(){
+    Artifact artifact = new Artifact(123L, "Invisibility Cloak", "provides invisibility", "ImageUrl");
+    given(artifactRepository.findById(123L)).willReturn(Optional.of(artifact));
+    doNothing().when(artifactRepository).deleteById(123L);
+    artifactService.delete(123L);
+    verify(artifactRepository, times(1)).deleteById(123L);
+  }
+
+  @Test
+  void testDeleteNotFound(){
+    given(artifactRepository.findById(123L)).willReturn(Optional.empty());
+    assertThrows(ArtifactNotFoundException.class, () -> {
+      artifactService.delete(123L);
+    });
+    verify(artifactRepository, times(1)).findById(123L);
+    verify(artifactRepository, times(0)).deleteById(123L);
+
+  }
 
   @Test
   void testUpdateNotFound(){

@@ -13,4 +13,5 @@ public interface ArtifactService {
     List<Artifact> findAllArtifacts();
     Artifact save(Artifact artifact);
     Artifact update(Long id, Artifact artifact);
+    void delete(Long id);
 }
