@@ -37,4 +37,16 @@ public class ArtifactServiceImpl implements ArtifactService {
     artifact.setId(idWorker.nextId());
     return artifactRepository.save(artifact);
   }
+
+  @Override
+  public Artifact update(Long id, Artifact artifact) {
+    return artifactRepository.findById(id)
+            .map(oldArtifact ->{
+              oldArtifact.setName(artifact.getName());
+              oldArtifact.setDescription(artifact.getDescription());
+              oldArtifact.setImageUrl(artifact.getImageUrl());
+              return artifactRepository.save(oldArtifact);
+            })
+            .orElseThrow(() -> new ArtifactNotFoundException(id));
+  }
 }

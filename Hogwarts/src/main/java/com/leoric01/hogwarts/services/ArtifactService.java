@@ -12,4 +12,5 @@ public interface ArtifactService {
     Artifact findById(Long id);
     List<Artifact> findAllArtifacts();
     Artifact save(Artifact artifact);
+    Artifact update(Long id, Artifact artifact);
 }
