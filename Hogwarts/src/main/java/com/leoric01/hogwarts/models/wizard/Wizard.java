@@ -1,6 +1,5 @@
 package com.leoric01.hogwarts.models.wizard;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.leoric01.hogwarts.models.artifact.Artifact;
 import jakarta.persistence.*;
 
@@ -54,5 +53,15 @@ public class Wizard implements Serializable {
 
     public Integer getNumberOfArtifacts() {
         return this.artifacts.size();
+    }
+
+    public void removeAllArtifacts() {
+        this.artifacts.forEach(artifact -> artifact.setOwner(null));
+        this.artifacts = null;
+    }
+
+    public void addArtifact(Artifact a1) {
+        a1.setOwner(this);
+        this.artifacts.add(a1);
     }
 }
