@@ -1,4 +1,4 @@
-package com.leoric01.hogwarts.system.exception;
+package com.leoric01.hogwarts.system.exceptions;
 
 import com.leoric01.hogwarts.models.artifact.ArtifactNotFoundException;
 import com.leoric01.hogwarts.system.Result;

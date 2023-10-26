@@ -49,4 +49,10 @@ public class ArtifactServiceImpl implements ArtifactService {
             })
             .orElseThrow(() -> new ArtifactNotFoundException(id));
   }
+
+  @Override
+  public void delete(Long id) {
+    artifactRepository.findById(id).orElseThrow(() -> new ArtifactNotFoundException(id));
+    artifactRepository.deleteById(id);
+  }
 }
