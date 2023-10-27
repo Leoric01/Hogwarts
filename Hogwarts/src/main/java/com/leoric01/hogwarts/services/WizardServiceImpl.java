@@ -1,7 +1,10 @@
 package com.leoric01.hogwarts.services;
 
+import com.leoric01.hogwarts.models.artifact.Artifact;
+import com.leoric01.hogwarts.models.artifact.ArtifactNotFoundException;
 import com.leoric01.hogwarts.models.wizard.Wizard;
 import com.leoric01.hogwarts.models.wizard.WizardNotFoundException;
+import com.leoric01.hogwarts.respositories.ArtifactRepository;
 import com.leoric01.hogwarts.respositories.WizardRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +16,12 @@ import java.util.List;
 @Transactional
 public class WizardServiceImpl implements WizardService{
     private final WizardRepository wizardRepository;
+    private final ArtifactRepository artifactRepository;
 
     @Autowired
-    public WizardServiceImpl(WizardRepository wizardRepository) {
+    public WizardServiceImpl(WizardRepository wizardRepository, ArtifactRepository artifactRepository) {
         this.wizardRepository = wizardRepository;
+        this.artifactRepository = artifactRepository;
     }
 
     @Override
@@ -52,5 +57,15 @@ public class WizardServiceImpl implements WizardService{
     @Override
     public Wizard findById(Long wizardId) {
         return wizardRepository.findById(wizardId).orElseThrow(() -> new WizardNotFoundException(wizardId));
+    }
+
+    @Override
+    public void assignArtifact(Long wizardId, Long artifactId) {
+        Artifact artifactToBeAssigned = artifactRepository.findById(artifactId).orElseThrow(() -> new ArtifactNotFoundException(artifactId));
+        Wizard wizard = wizardRepository.findById(wizardId).orElseThrow(()-> new WizardNotFoundException(wizardId));
+        if (artifactToBeAssigned.getOwner() != null){
+            artifactToBeAssigned.getOwner().removeArtifact(artifactToBeAssigned);
+        }
+        wizard.addArtifact(artifactToBeAssigned);
     }
 }
