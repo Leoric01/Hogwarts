@@ -19,9 +19,14 @@ import java.util.Map;
 @RestControllerAdvice
 public class ExceptionHandlerAdvice {
 
-    @ExceptionHandler(ArtifactNotFoundException.class)
+    @ExceptionHandler({ArtifactNotFoundException.class, WizardNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    Result handleArtifactNotFoundException(ArtifactNotFoundException ex){
+    Result handleArtifactOrWizardNotFoundException(Exception ex){
+        return new Result(false, StatusCode.NOT_FOUND, ex.getMessage());
+    }
+    @ExceptionHandler(ObjectNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    Result handleObjectNotFoundException(ObjectNotFoundException ex){
         return new Result(false, StatusCode.NOT_FOUND, ex.getMessage());
     }
 
@@ -36,10 +41,5 @@ public class ExceptionHandlerAdvice {
             map.put(key, val);
         });
         return new Result(false, StatusCode.INVALID_ARGUMENT, "Provided arguments are invalid, see data for details.", map);
-    }
-    @ExceptionHandler(WizardNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    Result handleWizardNotFoundException(WizardNotFoundException ex){
-        return new Result(false, StatusCode.NOT_FOUND, ex.getMessage());
     }
 }
