@@ -1,6 +1,7 @@
 package com.leoric01.hogwarts.system.exceptions;
 
 import com.leoric01.hogwarts.models.artifact.ArtifactNotFoundException;
+import com.leoric01.hogwarts.models.wizard.WizardNotFoundException;
 import com.leoric01.hogwarts.system.Result;
 import com.leoric01.hogwarts.system.StatusCode;
 import org.springframework.http.HttpStatus;
@@ -35,5 +36,10 @@ public class ExceptionHandlerAdvice {
             map.put(key, val);
         });
         return new Result(false, StatusCode.INVALID_ARGUMENT, "Provided arguments are invalid, see data for details.", map);
+    }
+    @ExceptionHandler(WizardNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    Result handleWizardNotFoundException(WizardNotFoundException ex){
+        return new Result(false, StatusCode.NOT_FOUND, ex.getMessage());
     }
 }

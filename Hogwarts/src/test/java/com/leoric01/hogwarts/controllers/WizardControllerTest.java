@@ -2,6 +2,8 @@ package com.leoric01.hogwarts.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leoric01.hogwarts.models.artifact.Artifact;
+import com.leoric01.hogwarts.models.artifact.ArtifactNotFoundException;
+import com.leoric01.hogwarts.models.artifact.dto.ArtifactDto;
 import com.leoric01.hogwarts.models.wizard.Wizard;
 import com.leoric01.hogwarts.models.wizard.WizardNotFoundException;
 import com.leoric01.hogwarts.models.wizard.dto.WizardDto;
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -125,29 +128,39 @@ public class WizardControllerTest {
 
     @Test
     void testUpdateWizardSuccess() throws Exception {
-        WizardDto wizardDto = new WizardDto(null, "Updated name", 1);
-        Wizard updatedWizard = new Wizard("Updated name");
-        updatedWizard.setId(10L);
-        String json = this.objectMapper.writeValueAsString(wizardDto);
-        given(wizardService.update(eq(10L), Mockito.any(Wizard.class))).willReturn(updatedWizard);
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/wizards/10").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+        WizardDto wizardDto = new WizardDto(null, "Belatrix", 5);
+        String json = objectMapper.writeValueAsString(wizardDto);
+        Wizard wizard = new Wizard("Belatrix");
+        wizard.setId(123L);
+        given(this.wizardService.update(eq(123L), Mockito.any(Wizard.class))).willReturn(wizard);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/wizards/123")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()) // Verify the response status code is OK (2xx).
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(jsonPath("$.message").value("Update Success"))
-                .andExpect(jsonPath("$.data.id").value("10"))
-                .andExpect(jsonPath("$.data.name").value("Updated name"));
+                .andExpect(jsonPath("$.data.id").isNumber()) // Check that "data.id" is a number.
+                .andExpect(jsonPath("$.data.name").value(wizard.getName()));
     }
 
     @Test
     void testUpdateWizardsErrorWithNonExistentId() throws Exception{
-        given(wizardService.update(eq(5L), Mockito.any(Wizard.class))).willThrow(new WizardNotFoundException(5L));
-        WizardDto wizardDto = new WizardDto(5L, "Updated wizard name", 0);
+    given(this.wizardService.update(eq(123L), Mockito.any(Wizard.class)))
+        .willThrow(new WizardNotFoundException(123L));
+
+        WizardDto wizardDto = new WizardDto(123L, "Updated wizard name", 0);
         String json = this.objectMapper.writeValueAsString(wizardDto);
 
-        mockMvc.perform(put("/api/wizards/5").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/wizards/123")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(false))
                 .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
-                .andExpect(jsonPath("$.message").value("Could not find wizard with id 5 :("))
+                .andExpect(jsonPath("$.message").value("Could not find wizard with id 123 :("))
                 .andExpect(jsonPath("$.data").isEmpty());
 
     }

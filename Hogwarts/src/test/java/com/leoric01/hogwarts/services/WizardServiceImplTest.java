@@ -107,7 +107,7 @@ public class WizardServiceImplTest {
         update.setName("Albus - update");
         given(wizardRepository.findById(1L)).willReturn(Optional.of(oldWizard));
         given(wizardRepository.save(oldWizard)).willReturn(oldWizard);
-        Wizard updatedWizard = wizardService.update(1L, oldWizard);
+        Wizard updatedWizard = wizardService.update(1L, update);
         assertThat(updatedWizard.getId()).isEqualTo(1L);
         assertThat(updatedWizard.getName()).isEqualTo(update.getName());
         verify(wizardRepository, times(1)).findById(1L);
