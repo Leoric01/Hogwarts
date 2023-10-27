@@ -1,17 +1,17 @@
 package com.leoric01.hogwarts.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leoric01.hogwarts.models.artifact.Artifact;
 import com.leoric01.hogwarts.models.artifact.ArtifactNotFoundException;
 import com.leoric01.hogwarts.models.artifact.dto.ArtifactDto;
+import com.leoric01.hogwarts.models.wizard.Wizard;
 import com.leoric01.hogwarts.services.ArtifactService;
 import com.leoric01.hogwarts.system.StatusCode;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestClassOrder;
+
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
