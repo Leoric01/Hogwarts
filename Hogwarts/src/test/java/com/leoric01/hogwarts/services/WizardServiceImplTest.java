@@ -1,6 +1,7 @@
 package com.leoric01.hogwarts.services;
 
 import com.leoric01.hogwarts.models.artifact.Artifact;
+import com.leoric01.hogwarts.models.artifact.ArtifactNotFoundException;
 import com.leoric01.hogwarts.models.wizard.Wizard;
 import com.leoric01.hogwarts.models.wizard.WizardNotFoundException;
 import com.leoric01.hogwarts.respositories.ArtifactRepository;
@@ -79,6 +80,30 @@ public class WizardServiceImplTest {
         wizardService.assignArtifact(3L,11111L);
         assertThat(a1.getOwner().getId()).isEqualTo(3);
 //        assertThat(w3.getArtifacts()).contains(a1); //CANT FIND CORRECT IMPORT
+    }
+    @Test
+    void testAssignArtifactWithNonExistentWizardId(){
+        Artifact a1 = new Artifact(11111L, "Deluminator", "description1", "ImagUrl1");
+        Wizard w2 = new Wizard();
+        w2.setId(2L);
+        w2.setName("Harry");
+        w2.addArtifact(a1);
+
+        given(artifactRepository.findById(11111L)).willReturn(Optional.of(a1));
+        given(wizardRepository.findById(3L)).willReturn(Optional.empty());
+        Throwable thrown = assertThrows(WizardNotFoundException.class, () -> {
+            wizardService.assignArtifact(3L, 11111L);
+        });
+        assertThat(thrown).isInstanceOf(WizardNotFoundException.class).hasMessage("Could not find wizard with id 3 :(");
+        assertThat(a1.getOwner().getId()).isEqualTo(2L);
+    }
+    @Test
+    void testAssignArtifactWithNonExistentArtifactId(){
+        given(artifactRepository.findById(11111L)).willReturn(Optional.empty());
+        Throwable thrown = assertThrows(ArtifactNotFoundException.class, () -> {
+            wizardService.assignArtifact(3L, 11111L);
+        });
+        assertThat(thrown).isInstanceOf(ArtifactNotFoundException.class).hasMessage("Could not find artifact with id 11111 :(");
     }
 
     @Test
