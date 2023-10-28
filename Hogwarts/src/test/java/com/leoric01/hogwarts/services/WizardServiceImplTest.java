@@ -16,14 +16,13 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,6 +64,7 @@ public class WizardServiceImplTest {
     void tearDown() {
     }
     @Test
+
     void testAssignArtifactSuccess(){
         Artifact a1 = new Artifact(11111L, "Deluminator", "description1", "ImagUrl1");
         Wizard w2 = new Wizard();
@@ -106,6 +106,39 @@ public class WizardServiceImplTest {
         assertThat(thrown).isInstanceOf(ArtifactNotFoundException.class).hasMessage("Could not find artifact with id 11111 :(");
     }
 
+        Throwable thrown = assertThrows(ArtifactNotFoundException.class, () -> {
+            wizardService.assignArtifact(3L, 1234L);
+        });
+        assertThat(thrown).isInstanceOf(ArtifactNotFoundException.class).hasMessage("Could not find artifact with id 1234 :(");
+    }
+
+    @Test
+    void testAssignArtifactSuccess(){
+        Artifact artifact = new Artifact();
+        artifact.setId(1234L);
+        artifact.setName("Elder Wand");
+        artifact.setDescription("Powerful wand");
+        artifact.setImageUrl("ImageUrl");
+
+        Wizard wizard1 = new Wizard();
+        wizard1.setId(999L);
+        wizard1.setName("Hagrid");
+        wizard1.addArtifact(artifact);
+
+        Wizard wizard2 =new Wizard();
+        wizard2.setId(100L);
+        wizard2.setName("Harry");
+
+        assertThat(artifact.getOwner().getId()).isEqualTo(999L);
+
+        given(wizardRepository.findById(100L)).willReturn(Optional.of(wizard2));
+        given(artifactRepository.findById(1234L)).willReturn(Optional.of(artifact));
+
+        wizardService.assignArtifact(100L, 1234L);
+
+        assertThat(artifact.getOwner().getId()).isEqualTo(100L);
+        assertThat(wizard2.getArtifacts()).contains(artifact);
+    }
     @Test
     void testFindAllSuccess(){
         given(wizardRepository.findAll()).willReturn(this.wizards);

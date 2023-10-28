@@ -77,6 +77,7 @@ public class WizardServiceImpl implements WizardService {
     if (artifactToBeAssigned.getOwner() != null) {
       artifactToBeAssigned.getOwner().removeArtifact(artifactToBeAssigned);
     }
+
     wizard.addArtifact(artifactToBeAssigned);
   }
 }

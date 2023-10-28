@@ -19,5 +19,6 @@ public interface WizardService {
     void delete(Long wizardId);
 
     Wizard findById(Long wizardId);
+
     void assignArtifact(Long wizardId, Long artifactId);
 }
