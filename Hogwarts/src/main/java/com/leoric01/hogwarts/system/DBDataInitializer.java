@@ -6,6 +6,7 @@ import com.leoric01.hogwarts.models.wizard.Wizard;
 import com.leoric01.hogwarts.respositories.ArtifactRepository;
 import com.leoric01.hogwarts.respositories.UserRepository;
 import com.leoric01.hogwarts.respositories.WizardRepository;
+import com.leoric01.hogwarts.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -16,12 +17,13 @@ public class DBDataInitializer implements CommandLineRunner {
     private final ArtifactRepository artifactRepository;
 
     private final WizardRepository wizardRepository;
-    private final UserRepository userRepository;
+
+    private final UserService userService;
     @Autowired
-    public DBDataInitializer(ArtifactRepository artifactRepository, WizardRepository wizardRepository, UserRepository userRepository) {
+    public DBDataInitializer(ArtifactRepository artifactRepository, WizardRepository wizardRepository, UserService userService) {
         this.artifactRepository = artifactRepository;
         this.wizardRepository = wizardRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -74,9 +76,9 @@ public class DBDataInitializer implements CommandLineRunner {
         u3.setPassword("ccc");
         u3.setEnabled(true);
         u3.setRoles("ADMIN");
-        userRepository.save(u1);
-        userRepository.save(u2);
-        userRepository.save(u3);
+        userService.save(u1);
+        userService.save(u2);
+        userService.save(u3);
 
     }
 }
