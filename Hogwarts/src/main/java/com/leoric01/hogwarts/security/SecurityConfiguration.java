@@ -64,6 +64,7 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(customBasicAuthenticationEntryPoint))
                 .oauth2ResourceServer(oAuth2 -> {
                     oAuth2.jwt(Customizer.withDefaults());
