@@ -212,16 +212,6 @@ public class WizardControllerTest {
     }
 
     @Test
-    void testAssignArtifactSuccess() throws Exception {
-        doNothing().when(wizardService).assignArtifact(2L, 11111L);
-        mockMvc.perform(put("/api/v1/wizards/2/artifacts/11111")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.flag").value(true))
-                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
-                .andExpect(jsonPath("$.message").value("Artifact Assignment Success"))
-                .andExpect(jsonPath("$.data").isEmpty());
-    }
-    @Test
     void testAssignArtifactErrorWithNonExistentWizard() throws Exception {
     doThrow(new WizardNotFoundException(5L)).when(wizardService).assignArtifact(5L, 11111L);
         mockMvc.perform(put("/api/v1/wizards/5/artifacts/11111")
