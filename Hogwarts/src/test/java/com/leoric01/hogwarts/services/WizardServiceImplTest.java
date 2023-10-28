@@ -1,7 +1,9 @@
 package com.leoric01.hogwarts.services;
 
+import com.leoric01.hogwarts.models.artifact.Artifact;
 import com.leoric01.hogwarts.models.wizard.Wizard;
 import com.leoric01.hogwarts.models.wizard.WizardNotFoundException;
+import com.leoric01.hogwarts.respositories.ArtifactRepository;
 import com.leoric01.hogwarts.respositories.WizardRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
@@ -29,6 +32,8 @@ import static org.mockito.BDDMockito.given;
 public class WizardServiceImplTest {
     @Mock
     WizardRepository wizardRepository;
+    @Mock
+    ArtifactRepository artifactRepository;
 
     @InjectMocks
     WizardServiceImpl wizardService;
@@ -57,6 +62,23 @@ public class WizardServiceImplTest {
 
     @AfterEach
     void tearDown() {
+    }
+    @Test
+    void testAssignArtifactSuccess(){
+        Artifact a1 = new Artifact(11111L, "Deluminator", "description1", "ImagUrl1");
+        Wizard w2 = new Wizard();
+        w2.setId(2L);
+        w2.setName("Harry");
+        w2.addArtifact(a1);
+
+        Wizard w3 = new Wizard();
+        w3.setId(3L);
+        w3.setName("Hagrid");
+        given(artifactRepository.findById(11111L)).willReturn(Optional.of(a1));
+        given(wizardRepository.findById(3L)).willReturn(Optional.of(w3));
+        wizardService.assignArtifact(3L,11111L);
+        assertThat(a1.getOwner().getId()).isEqualTo(3);
+//        assertThat(w3.getArtifacts()).contains(a1); //CANT FIND CORRECT IMPORT
     }
 
     @Test
@@ -145,5 +167,6 @@ public class WizardServiceImplTest {
         });
         verify(wizardRepository, times(1)).findById(1L);
     }
+
 
 }
