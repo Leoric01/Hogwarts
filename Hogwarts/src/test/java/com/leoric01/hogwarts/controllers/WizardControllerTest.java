@@ -80,6 +80,36 @@ public class WizardControllerTest {
         wizards.add(w3);
     }
     @Test
+    void testAssignArtifactSuccess() throws Exception {
+        doNothing().when(wizardService).assignArtifact(2L,111L);
+        mockMvc.perform(put("/api/v1/wizards/2/artifacts/111")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(true))
+                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+                .andExpect(jsonPath("$.message").value("Artifact Assignment Success"))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+    @Test
+    void testAssignArtifactWithNonExistentWizardId() throws Exception {
+        doThrow(new WizardNotFoundException(5L)).when(wizardService).assignArtifact(5L,3L);
+        mockMvc.perform(put("/api/v1/wizards/5/artifacts/3")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(false))
+                .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
+                .andExpect(jsonPath("$.message").value("Could not find wizard with id 5 :("))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+    @Test
+    void testAssignArtifactWithNonExistentArtifactId() throws Exception {
+    doThrow(new ArtifactNotFoundException(66L)).when(wizardService).assignArtifact(5L, 66L);
+        mockMvc.perform(put("/api/v1/wizards/5/artifacts/66")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(false))
+                .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
+                .andExpect(jsonPath("$.message").value("Could not find artifact with id 66 :("))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+    @Test
     void testFindWizardByIdSuccess () throws Exception{
         given(wizardService.findById(1L)).willReturn(this.wizards.get(0));
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/wizards/1").accept(MediaType.APPLICATION_JSON))
