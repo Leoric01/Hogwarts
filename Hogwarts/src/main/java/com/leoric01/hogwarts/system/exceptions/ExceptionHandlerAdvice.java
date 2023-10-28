@@ -1,6 +1,7 @@
 package com.leoric01.hogwarts.system.exceptions;
 
 import com.leoric01.hogwarts.models.artifact.ArtifactNotFoundException;
+import com.leoric01.hogwarts.models.hogwartsuser.UserNotFoundException;
 import com.leoric01.hogwarts.models.wizard.WizardNotFoundException;
 import com.leoric01.hogwarts.system.Result;
 import com.leoric01.hogwarts.system.StatusCode;
@@ -19,7 +20,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class ExceptionHandlerAdvice {
 
-    @ExceptionHandler({ArtifactNotFoundException.class, WizardNotFoundException.class})
+    @ExceptionHandler({ArtifactNotFoundException.class, WizardNotFoundException.class, UserNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     Result handleArtifactOrWizardNotFoundException(Exception ex){
         return new Result(false, StatusCode.NOT_FOUND, ex.getMessage());
