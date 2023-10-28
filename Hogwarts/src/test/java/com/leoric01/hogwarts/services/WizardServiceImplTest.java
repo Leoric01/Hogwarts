@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,6 +34,7 @@ public class WizardServiceImplTest {
     WizardRepository wizardRepository;
     @Mock
     ArtifactRepository artifactRepository;
+
     @InjectMocks
     WizardServiceImpl wizardService;
 
@@ -62,34 +64,47 @@ public class WizardServiceImplTest {
     void tearDown() {
     }
     @Test
-    void testAssignArtifactErrorWithNonExistentWizardId(){
-        Artifact artifact = new Artifact();
-        artifact.setId(1234L);
-        artifact.setName("Elder Wand");
-        artifact.setDescription("Powerful wand");
-        artifact.setImageUrl("ImageUrl");
 
-        Wizard wizard1 = new Wizard();
-        wizard1.setId(999L);
-        wizard1.setName("Hagrid");
-        wizard1.addArtifact(artifact);
+    void testAssignArtifactSuccess(){
+        Artifact a1 = new Artifact(11111L, "Deluminator", "description1", "ImagUrl1");
+        Wizard w2 = new Wizard();
+        w2.setId(2L);
+        w2.setName("Harry");
+        w2.addArtifact(a1);
 
-        assertThat(artifact.getOwner().getId()).isEqualTo(999L);
-
-        given(artifactRepository.findById(1234L)).willReturn(Optional.of(artifact));
-        given(wizardRepository.findById(3L)).willReturn(Optional.empty());
-
-        Throwable thrown = assertThrows(WizardNotFoundException.class, () -> {
-            wizardService.assignArtifact(3L, 1234L);
-        });
-
-        assertThat(thrown).isInstanceOf(WizardNotFoundException.class).hasMessage("Could not find wizard with id 3 :(");
-        assertThat(artifact.getOwner().getId()).isEqualTo(999L);
+        Wizard w3 = new Wizard();
+        w3.setId(3L);
+        w3.setName("Hagrid");
+        given(artifactRepository.findById(11111L)).willReturn(Optional.of(a1));
+        given(wizardRepository.findById(3L)).willReturn(Optional.of(w3));
+        wizardService.assignArtifact(3L,11111L);
+        assertThat(a1.getOwner().getId()).isEqualTo(3);
+//        assertThat(w3.getArtifacts()).contains(a1); //CANT FIND CORRECT IMPORT
     }
-
     @Test
-    void testAssignArtifactErrorWithNonExistentArtifactId(){
-        given(artifactRepository.findById(1234L)).willReturn(Optional.empty());
+    void testAssignArtifactWithNonExistentWizardId(){
+        Artifact a1 = new Artifact(11111L, "Deluminator", "description1", "ImagUrl1");
+        Wizard w2 = new Wizard();
+        w2.setId(2L);
+        w2.setName("Harry");
+        w2.addArtifact(a1);
+
+        given(artifactRepository.findById(11111L)).willReturn(Optional.of(a1));
+        given(wizardRepository.findById(3L)).willReturn(Optional.empty());
+        Throwable thrown = assertThrows(WizardNotFoundException.class, () -> {
+            wizardService.assignArtifact(3L, 11111L);
+        });
+        assertThat(thrown).isInstanceOf(WizardNotFoundException.class).hasMessage("Could not find wizard with id 3 :(");
+        assertThat(a1.getOwner().getId()).isEqualTo(2L);
+    }
+    @Test
+    void testAssignArtifactWithNonExistentArtifactId(){
+        given(artifactRepository.findById(11111L)).willReturn(Optional.empty());
+        Throwable thrown = assertThrows(ArtifactNotFoundException.class, () -> {
+            wizardService.assignArtifact(3L, 11111L);
+        });
+        assertThat(thrown).isInstanceOf(ArtifactNotFoundException.class).hasMessage("Could not find artifact with id 11111 :(");
+    }
 
         Throwable thrown = assertThrows(ArtifactNotFoundException.class, () -> {
             wizardService.assignArtifact(3L, 1234L);
@@ -210,5 +225,6 @@ public class WizardServiceImplTest {
         });
         verify(wizardRepository, times(1)).findById(1L);
     }
+
 
 }

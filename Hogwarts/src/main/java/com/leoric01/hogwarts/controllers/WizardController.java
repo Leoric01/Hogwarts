@@ -65,7 +65,7 @@ public class WizardController {
     @PutMapping("/{wizardId}/artifacts/{artifactId}")
     public Result assignArtifact(@PathVariable Long wizardId, @PathVariable Long artifactId){
         wizardService.assignArtifact(wizardId, artifactId);
-        return new Result(true, StatusCode.SUCCESS, "Artifact Assignment Success", null);
+    return new Result(true, StatusCode.SUCCESS, "Artifact Assignment Success");
     }
 
 }
